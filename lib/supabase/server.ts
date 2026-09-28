@@ -9,8 +9,10 @@ import { getPublicEnv } from "@/lib/env";
  * Create a new one per request; never share it between requests.
  */
 export async function createClient() {
-  const env = getPublicEnv();
+  // Read cookies first: it marks the route as dynamic (per-request) before
+  // anything else can fail during a build-time prerender.
   const cookieStore = await cookies();
+  const env = getPublicEnv();
 
   return createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
     cookies: {

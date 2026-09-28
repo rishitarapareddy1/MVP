@@ -1,0 +1,13 @@
+import { AppHeader } from "@/components/app-header";
+import { requireAdmin } from "@/lib/auth/session";
+
+export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
+  const profile = await requireAdmin();
+
+  return (
+    <>
+      <AppHeader homeHref="/admin" label="Admin" email={profile.email} />
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</main>
+    </>
+  );
+}
