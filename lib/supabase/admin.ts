@@ -1,6 +1,7 @@
 import "server-only";
 import { createClient } from "@supabase/supabase-js";
 import { getPublicEnv } from "@/lib/env";
+import type { Database } from "@/lib/db/database.types";
 
 /**
  * Service-role client that BYPASSES Row Level Security.
@@ -17,7 +18,7 @@ export function createAdminClient() {
     throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set");
   }
 
-  return createClient(NEXT_PUBLIC_SUPABASE_URL, serviceRoleKey, {
+  return createClient<Database>(NEXT_PUBLIC_SUPABASE_URL, serviceRoleKey, {
     // No user session here: don't persist or refresh auth tokens.
     auth: { persistSession: false, autoRefreshToken: false },
   });

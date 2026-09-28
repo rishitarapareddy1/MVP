@@ -2,6 +2,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { getPublicEnv } from "@/lib/env";
+import type { Database } from "@/lib/db/database.types";
 
 /**
  * Supabase client for Server Components, Server Actions and Route Handlers.
@@ -14,20 +15,26 @@ export async function createClient() {
   const cookieStore = await cookies();
   const env = getPublicEnv();
 
-  return createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
-        } catch {
-          // Server Components can't set cookies. This is safe to ignore
-          // because the session refresh in proxy.ts (Phase 1) will
-          // write the refreshed cookies instead.
-        }
+  return createServerClient<Database>(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options),
+            );
+          } catch {
+            // Server Components can't set cookies. This is safe to ignore
+            // because the session refresh in proxy.ts (Phase 1) will
+            // write the refreshed cookies instead.
+          }
+        },
       },
     },
-  });
+  );
 }

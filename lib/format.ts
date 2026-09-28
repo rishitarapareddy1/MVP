@@ -26,3 +26,17 @@ export function formatDateTime(value: string | Date): string {
     timeStyle: "short",
   }).format(new Date(value));
 }
+
+/** Today's date in Chicago as "YYYY-MM-DD" (for <input type="date" min>). */
+export function todayInChicago(now: Date = new Date()): string {
+  // en-CA formats dates as YYYY-MM-DD.
+  return new Intl.DateTimeFormat("en-CA", { timeZone: DISPLAY_TIME_ZONE }).format(now);
+}
+
+/** Formats a date-only value ("2026-10-15") without shifting it across time zones. */
+export function formatDateOnly(value: string): string {
+  // Date-only strings parse as UTC midnight, so format them in UTC too.
+  return new Intl.DateTimeFormat("en-US", { timeZone: "UTC", dateStyle: "medium" }).format(
+    new Date(value),
+  );
+}
