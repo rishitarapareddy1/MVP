@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth/session";
 
 const NAV = [
   { href: "/admin/projects", label: "Projects" },
+  { href: "/admin/students", label: "Students" },
   { href: "/admin/assessments", label: "Assessments" },
   { href: "/admin/submissions", label: "Grading" },
 ];

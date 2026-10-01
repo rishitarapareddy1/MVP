@@ -20,3 +20,4 @@ export type AssessmentStatus = Enums["assessment_status"];
 export type Student = Tables<"students">;
 export type Assessment = Tables<"assessments">;
 export type AssessmentSubmission = Tables<"assessment_submissions">;
+export type OfferStatus = Enums["offer_status"];

@@ -2,12 +2,14 @@ import Link from "next/link";
 import { StatusBadge } from "@/components/status-badge";
 import { requireAdmin } from "@/lib/auth/session";
 import { countPendingSubmissions } from "@/lib/db/assessments";
+import { expireStaleOffers } from "@/lib/db/offers";
 import { countProjectsByStatus } from "@/lib/db/projects";
 import { PROJECT_STATUSES } from "@/lib/db/types";
 
-// Overview. Expiring offers are added in Phase 4.
+// Overview. Loading it also expires overdue offers (no cron in the MVP).
 export default async function AdminOverview() {
   await requireAdmin();
+  await expireStaleOffers();
   const [counts, toGrade] = await Promise.all([countProjectsByStatus(), countPendingSubmissions()]);
 
   return (

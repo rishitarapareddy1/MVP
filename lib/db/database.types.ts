@@ -734,6 +734,7 @@ export type Database = {
       };
     };
     Functions: {
+      accept_offer: { Args: { p_offer_id: string }; Returns: string };
       can_submit_assessment: {
         Args: { p_assessment_id: string };
         Returns: boolean;
@@ -742,8 +743,14 @@ export type Database = {
         Args: { p_project_id: string };
         Returns: boolean;
       };
+      decline_offer: { Args: { p_offer_id: string }; Returns: string };
+      expire_stale_offers: { Args: never; Returns: number };
       is_admin: { Args: never; Returns: boolean };
       is_student: { Args: never; Returns: boolean };
+      send_offers: {
+        Args: { p_offers: Json; p_project_id: string };
+        Returns: number;
+      };
     };
     Enums: {
       assessment_status: "submitted" | "passed" | "failed";
