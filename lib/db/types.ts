@@ -15,3 +15,8 @@ export type Profile = Pick<Tables<"profiles">, "id" | "role" | "email" | "full_n
 export type Project = Tables<"projects">;
 export type Business = Tables<"businesses">;
 export type ActivityLogEntry = Tables<"activity_log">;
+
+export type AssessmentStatus = Enums["assessment_status"];
+export type Student = Tables<"students">;
+export type Assessment = Tables<"assessments">;
+export type AssessmentSubmission = Tables<"assessment_submissions">;

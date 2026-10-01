@@ -1,7 +1,11 @@
 import { AppHeader } from "@/components/app-header";
 import { requireAdmin } from "@/lib/auth/session";
 
-const NAV = [{ href: "/admin/projects", label: "Projects" }];
+const NAV = [
+  { href: "/admin/projects", label: "Projects" },
+  { href: "/admin/assessments", label: "Assessments" },
+  { href: "/admin/submissions", label: "Grading" },
+];
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   const profile = await requireAdmin();

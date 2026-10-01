@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PROJECT_CATEGORIES, PROJECT_STATUSES } from "@/lib/db/types";
+import { idSchema } from "./id";
 import { parseDollarsToCents, parseSkillTags } from "./parsers";
 
 const optionalText = (max: number) =>
@@ -46,6 +47,6 @@ export const scopeSchema = z.object({
 export type ScopeInput = z.infer<typeof scopeSchema>;
 
 export const statusChangeSchema = z.object({
-  project_id: z.uuid(),
+  project_id: idSchema,
   to: z.enum(PROJECT_STATUSES),
 });

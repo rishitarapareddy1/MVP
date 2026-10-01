@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import { isId } from "@/lib/validation/id";
 import { requireAdmin } from "@/lib/auth/session";
 import { getProjectDetail, setProjectStatus, updateProjectScope } from "@/lib/db/projects";
 import { canTransition, isScopeEditable } from "@/lib/projects/transitions";
@@ -18,7 +18,7 @@ export async function saveScope(
   formData: FormData,
 ): Promise<ActionResult> {
   await requireAdmin();
-  if (!z.uuid().safeParse(projectId).success) return fail("Unknown project");
+  if (!isId(projectId)) return fail("Unknown project");
 
   const parsed = scopeSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return failValidation(parsed.error);

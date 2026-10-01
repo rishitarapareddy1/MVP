@@ -734,6 +734,10 @@ export type Database = {
       };
     };
     Functions: {
+      can_submit_assessment: {
+        Args: { p_assessment_id: string };
+        Returns: boolean;
+      };
       can_submit_deliverable: {
         Args: { p_project_id: string };
         Returns: boolean;
