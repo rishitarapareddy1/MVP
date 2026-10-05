@@ -70,6 +70,30 @@ describe("canTransition", () => {
   });
 });
 
+describe("approved -> paid", () => {
+  const approved = { ...scoped, status: "approved" as const };
+
+  it("requires both payments to be recorded", () => {
+    const none = canTransition(approved, "paid", { manual: true });
+    expect(none.ok).toBe(false);
+    if (!none.ok) expect(none.reasons).toHaveLength(2);
+
+    const one = canTransition(approved, "paid", {
+      manual: true,
+      paymentDirections: ["business_to_us"],
+    });
+    expect(one.ok).toBe(false);
+    if (!one.ok) expect(one.reasons).toEqual(["Record the student's payment"]);
+
+    expect(
+      canTransition(approved, "paid", {
+        manual: true,
+        paymentDirections: ["business_to_us", "us_to_student"],
+      }).ok,
+    ).toBe(true);
+  });
+});
+
 describe("manualTransitionsFrom", () => {
   it("hides system-only transitions", () => {
     expect(manualTransitionsFrom("matching")).toEqual(["scoping", "cancelled"]);

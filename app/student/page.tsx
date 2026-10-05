@@ -64,7 +64,9 @@ export default async function StudentDashboard() {
             <ul className="flex flex-col divide-y">
               {activeProjects.map((p) => (
                 <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
-                  <span className="font-medium">{p.title}</span>
+                  <Link href={`/student/projects/${p.id}`} className="font-medium underline">
+                    {p.title}
+                  </Link>
                   <span className="flex items-center gap-2 text-sm">
                     {p.deadline && (
                       <span className="text-muted-foreground">

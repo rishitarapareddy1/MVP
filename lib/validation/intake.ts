@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { optionalText } from "./common";
 import { PROJECT_CATEGORIES } from "@/lib/db/types";
 import { BUDGET_RANGES, SOURCES } from "@/lib/projects/labels";
 import { todayInChicago } from "@/lib/format";
@@ -6,14 +7,6 @@ import { todayInChicago } from "@/lib/format";
 // Name of the hidden honeypot field. Real people never see or fill it;
 // naive spam bots fill every input. Deliberately boring so bots don't skip it.
 export const HONEYPOT_FIELD = "company_fax";
-
-/** Blank form fields arrive as "" — treat them as "not provided". */
-const optionalText = (max: number) =>
-  z
-    .string()
-    .trim()
-    .max(max)
-    .transform((v) => v || null);
 
 export const intakeSchema = z.object({
   business_name: z.string().trim().min(1, "Enter your business name").max(200),

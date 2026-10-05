@@ -68,6 +68,8 @@ export function missingScopeFields(p: ScopeFields): string[] {
 
 export type TransitionCheck = { ok: true } | { ok: false; reasons: string[] };
 
+export type PaymentDirection = "business_to_us" | "us_to_student";
+
 /**
  * Can this project move to `to`? Checks the transition graph plus any
  * preconditions. `manual` = triggered by a status button (vs. a side effect).
@@ -75,7 +77,14 @@ export type TransitionCheck = { ok: true } | { ok: false; reasons: string[] };
 export function canTransition(
   project: ScopeFields & Pick<Project, "status">,
   to: ProjectStatus,
-  { manual }: { manual: boolean },
+  {
+    manual,
+    paymentDirections = [],
+  }: {
+    manual: boolean;
+    /** Directions of payments recorded so far (needed to check -> paid). */
+    paymentDirections?: string[];
+  },
 ): TransitionCheck {
   const from = project.status;
   if (!TRANSITIONS[from].includes(to)) {
@@ -92,7 +101,14 @@ export function canTransition(
       return { ok: false, reasons: ["Student pay can't be more than the budget"] };
     }
   }
-  // Phase 5 adds: approved -> paid requires both payments recorded.
+  if (to === "paid") {
+    // Spec flow B: record both payments, then mark paid.
+    const reasons: string[] = [];
+    if (!paymentDirections.includes("business_to_us"))
+      reasons.push("Record the business's payment");
+    if (!paymentDirections.includes("us_to_student")) reasons.push("Record the student's payment");
+    if (reasons.length > 0) return { ok: false, reasons };
+  }
 
   return { ok: true };
 }

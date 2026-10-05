@@ -1,13 +1,7 @@
 import { z } from "zod";
+import { optionalText } from "./common";
 import { PROJECT_CATEGORIES } from "@/lib/db/types";
 import { parseSkillTags } from "./parsers";
-
-const optionalText = (max: number) =>
-  z
-    .string()
-    .trim()
-    .max(max)
-    .transform((v) => v || null);
 
 const optionalInt = (min: number, max: number, message: string) =>
   z

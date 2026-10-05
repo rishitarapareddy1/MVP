@@ -53,7 +53,7 @@ export async function listProjectOffers(projectId: string) {
 // includes budget, business or token columns.
 // ---------------------------------------------------------------------------
 
-const STUDENT_PROJECT_COLUMNS =
+export const STUDENT_PROJECT_COLUMNS =
   "id, title, scoped_description, deliverable, category, required_skills, preferred_skills, estimated_hours, student_pay_cents, deadline, is_starter, status, assigned_student_id";
 
 type StudentProjectViewRow = Database["public"]["Views"]["student_projects"]["Row"];
@@ -63,7 +63,7 @@ type StudentProjectViewRow = Database["public"]["Views"]["student_projects"]["Ro
  * too. These columns are NOT NULL in the projects table, so restore that here
  * once instead of sprinkling `!` across pages.
  */
-function normalizeStudentProject(row: StudentProjectViewRow) {
+export function normalizeStudentProject(row: StudentProjectViewRow) {
   return {
     ...row,
     id: row.id!,

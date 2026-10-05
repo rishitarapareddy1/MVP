@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { isId } from "@/lib/validation/id";
 import { requireAdmin } from "@/lib/auth/session";
+import { listProjectPayments } from "@/lib/db/payments";
 import { getProjectDetail, setProjectStatus, updateProjectScope } from "@/lib/db/projects";
 import { canTransition, isScopeEditable } from "@/lib/projects/transitions";
 import { STATUS_LABELS } from "@/lib/projects/labels";
@@ -48,7 +49,11 @@ export async function changeStatus(
   const project = await getProjectDetail(project_id);
   if (!project) return fail("Project not found");
 
-  const check = canTransition(project, to, { manual: true });
+  const payments = to === "paid" ? await listProjectPayments(project_id) : [];
+  const check = canTransition(project, to, {
+    manual: true,
+    paymentDirections: payments.map((p) => p.direction),
+  });
   if (!check.ok) return fail(check.reasons.join(". "));
 
   const changed = await setProjectStatus(project_id, project.status, to);

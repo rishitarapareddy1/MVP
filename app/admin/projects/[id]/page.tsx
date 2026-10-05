@@ -5,12 +5,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdmin } from "@/lib/auth/session";
 import { OfferStatusBadge } from "@/components/offer-status-badge";
 import { ScoreBreakdown } from "@/components/score-breakdown";
+import { CopyButton } from "@/components/copy-button";
+import { listProjectDeliverables } from "@/lib/db/delivery";
+import { getProjectFeedback } from "@/lib/db/feedback";
 import { expireStaleOffers, listProjectOffers } from "@/lib/db/offers";
+import { listProjectPayments } from "@/lib/db/payments";
+import { BUCKETS, signedUrl } from "@/lib/db/storage";
+import { getSiteOrigin } from "@/lib/site";
 import { getProjectDetail, listProjectActivity } from "@/lib/db/projects";
 import { getShortlist } from "@/lib/matching/shortlist";
 import type { BreakdownItem } from "@/lib/matching/score";
 import type { ProjectStatus } from "@/lib/db/types";
-import { formatCents, formatDate, formatDateTime } from "@/lib/format";
+import { formatCents, formatDate, formatDateTime, todayInChicago } from "@/lib/format";
 import {
   BUDGET_RANGE_LABELS,
   SOURCE_LABELS,
@@ -20,6 +26,7 @@ import {
 } from "@/lib/projects/labels";
 import { canTransition, isScopeEditable, manualTransitionsFrom } from "@/lib/projects/transitions";
 import { ScopeForm } from "./scope-form";
+import { PaymentsPanel } from "./payments-panel";
 import { ShortlistPanel, type ShortlistRow } from "./shortlist-panel";
 import { StatusControls, type StatusOption } from "./status-controls";
 
@@ -33,11 +40,29 @@ export default async function AdminProjectPage({ params }: PageProps<"/admin/pro
   await expireStaleOffers();
   const project = await getProjectDetail(id);
   if (!project) notFound();
-  const [activity, offers, shortlist] = await Promise.all([
+  const [activity, offers, shortlist, deliverables, payments, feedback] = await Promise.all([
     listProjectActivity(id),
     listProjectOffers(id),
     project.status === "matching" ? getShortlist(id) : null,
+    listProjectDeliverables(id),
+    listProjectPayments(id),
+    getProjectFeedback(id),
   ]);
+  const deliverableUrls = await Promise.all(
+    deliverables.map((d) =>
+      d.file_path ? signedUrl(BUCKETS.deliverables, d.file_path, 3600) : null,
+    ),
+  );
+  const feedbackUrl = `${await getSiteOrigin()}/feedback/${project.feedback_token}`;
+  // Statuses after a student is assigned: show delivery/payment/feedback sections.
+  const isPostAssignment = [
+    "assigned",
+    "in_progress",
+    "delivered",
+    "approved",
+    "paid",
+    "closed",
+  ].includes(project.status);
   const studentNames = new Map(
     offers.map((o) => [o.student?.id, o.student?.profile?.full_name ?? o.student?.profile?.email]),
   );
@@ -51,7 +76,10 @@ export default async function AdminProjectPage({ params }: PageProps<"/admin/pro
   });
 
   const statusOptions: StatusOption[] = manualTransitionsFrom(project.status).map((to) => {
-    const check = canTransition(project, to, { manual: true });
+    const check = canTransition(project, to, {
+      manual: true,
+      paymentDirections: payments.map((p) => p.direction),
+    });
     return { to, blockedReasons: check.ok ? [] : check.reasons };
   });
   const editable = isScopeEditable(project.status);
@@ -136,6 +164,107 @@ export default async function AdminProjectPage({ params }: PageProps<"/admin/pro
                 </li>
               ))}
             </ul>
+          </CardContent>
+        </Card>
+      )}
+
+      {deliverables.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Deliverables</CardTitle>
+            <p className="text-muted-foreground text-sm">
+              Review the work and send it to the business, then mark the project Approved (or move
+              it back to In progress for changes).
+            </p>
+          </CardHeader>
+          <CardContent>
+            <ul className="flex flex-col gap-3 text-sm">
+              {deliverables.map((d, i) => {
+                const href = d.url ?? deliverableUrls[i];
+                return (
+                  <li key={d.id} className="flex flex-col gap-1">
+                    <span>
+                      {formatDateTime(d.submitted_at)} ·{" "}
+                      {href ? (
+                        <a href={href} target="_blank" rel="noreferrer" className="underline">
+                          {d.url ? "Open link" : "Download file"}
+                        </a>
+                      ) : (
+                        <span className="text-destructive">file missing</span>
+                      )}
+                    </span>
+                    {d.note && <span className="text-muted-foreground">Note: {d.note}</span>}
+                  </li>
+                );
+              })}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
+      {isPostAssignment && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Payments</CardTitle>
+            <p className="text-muted-foreground text-sm">
+              Record both payments after they happen outside the app, then mark the project Paid.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <PaymentsPanel
+              projectId={project.id}
+              payments={payments}
+              budgetCents={project.budget_cents}
+              studentPayCents={project.student_pay_cents}
+              today={todayInChicago()}
+            />
+          </CardContent>
+        </Card>
+      )}
+
+      {["approved", "paid", "closed"].includes(project.status) && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Business feedback</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3 text-sm">
+            {feedback ? (
+              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5">
+                <dt className="text-muted-foreground">Rating</dt>
+                <dd>
+                  {"★".repeat(feedback.rating)}
+                  {"☆".repeat(5 - feedback.rating)}
+                </dd>
+                <dt className="text-muted-foreground">Would hire again</dt>
+                <dd>{feedback.would_hire_again ? "Yes" : "No"}</dd>
+                <dt className="text-muted-foreground">Interested in internship/job</dt>
+                <dd className={feedback.interested_in_internship_or_job ? "font-medium" : ""}>
+                  {feedback.interested_in_internship_or_job ? "Yes" : "No"}
+                </dd>
+                {feedback.quality_notes && (
+                  <>
+                    <dt className="text-muted-foreground">Notes</dt>
+                    <dd className="whitespace-pre-wrap">{feedback.quality_notes}</dd>
+                  </>
+                )}
+                <dt className="text-muted-foreground">Submitted</dt>
+                <dd>{formatDateTime(feedback.submitted_at)}</dd>
+              </dl>
+            ) : (
+              <>
+                <p className="text-muted-foreground">
+                  {project.status === "paid"
+                    ? "Email this link to the business. Submitting it closes the project."
+                    : "The link opens for feedback once the project is marked Paid."}
+                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <code className="bg-muted max-w-full truncate rounded px-2 py-1 text-xs">
+                    {feedbackUrl}
+                  </code>
+                  <CopyButton text={feedbackUrl} label="Copy link" />
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
       )}

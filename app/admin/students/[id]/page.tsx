@@ -6,17 +6,19 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdmin } from "@/lib/auth/session";
 import { BUCKETS, signedUrl } from "@/lib/db/storage";
+import { listStudentOutcomes } from "@/lib/db/outcomes";
 import { getStudentForAdmin } from "@/lib/db/students";
-import { formatDate } from "@/lib/format";
-import { CATEGORY_LABELS } from "@/lib/projects/labels";
+import { formatDate, formatDateOnly, todayInChicago } from "@/lib/format";
+import { CATEGORY_LABELS, OUTCOME_LABELS } from "@/lib/projects/labels";
 import { isId } from "@/lib/validation/id";
 import { ActiveToggle } from "./active-toggle";
+import { OutcomeForm } from "./outcome-form";
 
 export default async function AdminStudentPage({ params }: PageProps<"/admin/students/[id]">) {
   await requireAdmin();
   const { id } = await params;
   if (!isId(id)) notFound();
-  const student = await getStudentForAdmin(id);
+  const [student, outcomes] = await Promise.all([getStudentForAdmin(id), listStudentOutcomes(id)]);
   if (!student) notFound();
   const resumeUrl = student.resume_path
     ? await signedUrl(BUCKETS.resumes, student.resume_path)
@@ -161,6 +163,47 @@ export default async function AdminStudentPage({ params }: PageProps<"/admin/stu
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Outcomes</CardTitle>
+          <p className="text-muted-foreground text-sm">
+            What this work led to: repeat projects, referrals, interviews, offers.
+          </p>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          {outcomes.length === 0 ? (
+            <p className="text-muted-foreground text-sm">None recorded yet.</p>
+          ) : (
+            <ul className="flex flex-col gap-2 text-sm">
+              {outcomes.map((o) => (
+                <li key={o.id} className="flex flex-col">
+                  <span>
+                    <span className="font-medium">{OUTCOME_LABELS[o.type]}</span> ·{" "}
+                    {formatDateOnly(o.occurred_at)}
+                    {o.business?.name && ` · ${o.business.name}`}
+                    {o.project && (
+                      <>
+                        {" · "}
+                        <Link href={`/admin/projects/${o.project.id}`} className="underline">
+                          {o.project.title}
+                        </Link>
+                      </>
+                    )}
+                  </span>
+                  {o.notes && <span className="text-muted-foreground">{o.notes}</span>}
+                </li>
+              ))}
+            </ul>
+          )}
+          <OutcomeForm
+            studentId={student.id}
+            projects={student.projects.map((p) => ({ id: p.id, title: p.title }))}
+            today={todayInChicago()}
+            formKey={outcomes.length}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }

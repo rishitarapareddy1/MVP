@@ -21,3 +21,5 @@ export type Student = Tables<"students">;
 export type Assessment = Tables<"assessments">;
 export type AssessmentSubmission = Tables<"assessment_submissions">;
 export type OfferStatus = Enums["offer_status"];
+export type OutcomeType = Enums["outcome_type"];
+export const OUTCOME_TYPES = Constants.public.Enums.outcome_type;

@@ -1,4 +1,4 @@
-import type { ProjectCategory, ProjectStatus } from "@/lib/db/types";
+import type { OutcomeType, ProjectCategory, ProjectStatus } from "@/lib/db/types";
 
 // Human-readable labels for enum values. Kept in one place so the intake
 // form, admin tables and (later) student pages all say the same thing.
@@ -51,3 +51,38 @@ export const SOURCE_LABELS: Record<Source, string> = {
   search: "Web search",
   other: "Other",
 };
+
+export const OUTCOME_LABELS: Record<OutcomeType, string> = {
+  repeat_project: "Repeat project",
+  referral: "Referral",
+  internship_interview: "Internship interview",
+  job_interview: "Job interview",
+  internship_offer: "Internship offer",
+  job_offer: "Job offer",
+  listed_on_resume: "Listed on resume",
+  other: "Other",
+};
+
+export const PAYMENT_METHODS = [
+  "stripe_invoice",
+  "venmo",
+  "zelle",
+  "check",
+  "cash",
+  "other",
+] as const;
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
+
+export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
+  stripe_invoice: "Stripe invoice",
+  venmo: "Venmo",
+  zelle: "Zelle",
+  check: "Check",
+  cash: "Cash",
+  other: "Other",
+};
+
+export const PAYMENT_DIRECTION_LABELS = {
+  business_to_us: "Business paid us",
+  us_to_student: "We paid the student",
+} as const;

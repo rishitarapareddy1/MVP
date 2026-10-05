@@ -279,6 +279,7 @@ export type Database = {
       feedback: {
         Row: {
           created_at: string;
+          followed_up_at: string | null;
           id: string;
           interested_in_internship_or_job: boolean;
           project_id: string;
@@ -290,6 +291,7 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
+          followed_up_at?: string | null;
           id?: string;
           interested_in_internship_or_job: boolean;
           project_id: string;
@@ -301,6 +303,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
+          followed_up_at?: string | null;
           id?: string;
           interested_in_internship_or_job?: boolean;
           project_id?: string;
@@ -746,10 +749,34 @@ export type Database = {
       decline_offer: { Args: { p_offer_id: string }; Returns: string };
       expire_stale_offers: { Args: never; Returns: number };
       is_admin: { Args: never; Returns: boolean };
+      is_assigned_project_folder: {
+        Args: { p_folder: string };
+        Returns: boolean;
+      };
       is_student: { Args: never; Returns: boolean };
       send_offers: {
         Args: { p_offers: Json; p_project_id: string };
         Returns: number;
+      };
+      start_project: { Args: { p_project_id: string }; Returns: string };
+      submit_deliverable: {
+        Args: {
+          p_file_path: string;
+          p_note: string;
+          p_project_id: string;
+          p_url: string;
+        };
+        Returns: string;
+      };
+      submit_feedback: {
+        Args: {
+          p_interested: boolean;
+          p_quality_notes: string;
+          p_rating: number;
+          p_token: string;
+          p_would_hire_again: boolean;
+        };
+        Returns: string;
       };
     };
     Enums: {

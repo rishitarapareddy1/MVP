@@ -5,6 +5,7 @@ export const BUCKETS = {
   resumes: "resumes",
   submissions: "submissions",
   assessmentResources: "assessment-resources",
+  deliverables: "deliverables",
 } as const;
 export type Bucket = (typeof BUCKETS)[keyof typeof BUCKETS];
 

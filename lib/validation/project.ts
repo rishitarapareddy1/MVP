@@ -1,14 +1,8 @@
 import { z } from "zod";
+import { optionalText } from "./common";
 import { PROJECT_CATEGORIES, PROJECT_STATUSES } from "@/lib/db/types";
 import { idSchema } from "./id";
 import { parseDollarsToCents, parseSkillTags } from "./parsers";
-
-const optionalText = (max: number) =>
-  z
-    .string()
-    .trim()
-    .max(max)
-    .transform((v) => v || null);
 
 /** Dollar input ("250", "$1,250.50") -> integer cents, or null if blank. */
 const dollarsToCents = (label: string) =>
