@@ -36,3 +36,14 @@ lib/format.ts        Money (cents) and America/Chicago date display
 lib/result.ts        ActionResult type for server actions
 supabase/migrations/ SQL migrations (Phase 1)
 ```
+
+## Deployment
+
+- **App:** Vercel, auto-deploys every push to `main`. Live at https://mvp123-blond.vercel.app
+- **Env vars on Vercel:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+  `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_EMAILS`, `ALLOWED_STUDENT_EMAIL_DOMAINS`
+- **Database:** Supabase project `ikjlyhirletanedflmhw` (shared by local dev and production).
+  Apply new migrations with `npm run db:push`, then `npm run db:types`.
+- **Auth:** login codes are emailed through custom SMTP (set in the Supabase dashboard). If the
+  domain changes, update `site_url` / `additional_redirect_urls` in `supabase/config.toml` and push
+  only those settings (see git history for the minimal-config approach).
