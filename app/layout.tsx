@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { BRAND } from "@/lib/brand";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,8 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Student Project Matching",
-  description: "Small, scoped business projects matched to vetted UIUC students.",
+  // "%s · Campus Projects" for pages that set a title, the bare name otherwise.
+  title: { default: BRAND.name, template: `%s · ${BRAND.name}` },
+  description: BRAND.tagline,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

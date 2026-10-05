@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page-header";
+import { ToneBadge } from "@/components/status-badge";
 import {
   Table,
   TableBody,
@@ -22,27 +23,30 @@ export default async function AdminStudentsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold">Students</h1>
+      <PageHeader
+        title="Students"
+        description="Everyone who has signed up, with their verified skills and track record."
+      />
       {students.length === 0 ? (
         <p className="text-muted-foreground">No students yet.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border">
+        <div className="bg-card overflow-x-auto rounded-xl border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Student</TableHead>
-                <TableHead>Skills</TableHead>
+                <TableHead className="pl-4">Student</TableHead>
+                <TableHead className="hidden xl:table-cell">Skills</TableHead>
                 <TableHead>Passed assessments</TableHead>
                 <TableHead className="text-right">Completed</TableHead>
                 <TableHead className="text-right">Active</TableHead>
-                <TableHead className="text-right">Avg rating</TableHead>
+                <TableHead className="text-right">Rating</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {students.map((s) => (
                 <TableRow key={s.id}>
-                  <TableCell>
+                  <TableCell className="pl-4">
                     <Link href={`/admin/students/${s.id}`} className="font-medium hover:underline">
                       {s.full_name ?? "Unnamed"}
                     </Link>
@@ -51,7 +55,7 @@ export default async function AdminStudentsPage() {
                       {s.major ? ` · ${s.major}` : ""}
                     </div>
                   </TableCell>
-                  <TableCell className="max-w-48 truncate text-sm">
+                  <TableCell className="hidden max-w-48 truncate text-sm xl:table-cell">
                     {s.skills.join(", ") || "—"}
                   </TableCell>
                   <TableCell className="text-sm">
@@ -68,11 +72,11 @@ export default async function AdminStudentsPage() {
                   </TableCell>
                   <TableCell>
                     {!s.is_active ? (
-                      <Badge variant="destructive">Deactivated</Badge>
+                      <ToneBadge tone="neutral">Deactivated</ToneBadge>
                     ) : !s.is_available ? (
-                      <Badge variant="secondary">Unavailable</Badge>
+                      <ToneBadge tone="waiting">Unavailable</ToneBadge>
                     ) : (
-                      <Badge variant="outline">Available</Badge>
+                      <ToneBadge tone="done">Available</ToneBadge>
                     )}
                   </TableCell>
                 </TableRow>

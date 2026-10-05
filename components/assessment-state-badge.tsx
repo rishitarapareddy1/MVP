@@ -1,20 +1,22 @@
-import { Badge } from "@/components/ui/badge";
+import { ToneBadge } from "@/components/status-badge";
 import type { AssessmentState } from "@/lib/assessments/eligibility";
 import { formatDate } from "@/lib/format";
 
 export function AssessmentStateBadge({ state }: { state: AssessmentState }) {
   switch (state.kind) {
     case "not_started":
-      return <Badge variant="outline">Not started</Badge>;
+      return <ToneBadge tone="neutral">Not started</ToneBadge>;
     case "pending":
-      return <Badge variant="secondary">Waiting for grading</Badge>;
+      return <ToneBadge tone="waiting">Waiting for grading</ToneBadge>;
     case "passed":
-      return <Badge>Passed{state.score != null ? ` · ${state.score}` : ""}</Badge>;
-    case "failed":
       return (
-        <Badge variant="destructive">
-          {state.canRetake ? "Retake available" : `Retake from ${formatDate(state.retakeAt)}`}
-        </Badge>
+        <ToneBadge tone="done">Passed{state.score != null ? ` · ${state.score}` : ""}</ToneBadge>
+      );
+    case "failed":
+      return state.canRetake ? (
+        <ToneBadge tone="action">Retake available</ToneBadge>
+      ) : (
+        <ToneBadge tone="neutral">Retake from {formatDate(state.retakeAt)}</ToneBadge>
       );
   }
 }

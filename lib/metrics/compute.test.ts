@@ -170,7 +170,12 @@ describe("offers", () => {
         ...rows,
         offers: [
           ...rows.offers,
-          { project_id: "p9", status: "accepted", created_at: "2026-09-10T00:00:00Z", responded_at: "2026-09-09T00:00:00Z" },
+          {
+            project_id: "p9",
+            status: "accepted",
+            created_at: "2026-09-10T00:00:00Z",
+            responded_at: "2026-09-09T00:00:00Z",
+          },
         ],
       },
       now,

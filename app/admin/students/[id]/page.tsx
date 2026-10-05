@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OfferStatusBadge } from "@/components/offer-status-badge";
 import { StatusBadge } from "@/components/status-badge";
-import { Badge } from "@/components/ui/badge";
+import { ToneBadge } from "@/components/status-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdmin } from "@/lib/auth/session";
 import { BUCKETS, signedUrl } from "@/lib/db/storage";
@@ -34,9 +34,9 @@ export default async function AdminStudentPage({ params }: PageProps<"/admin/stu
           <h1 className="text-2xl font-semibold">
             {student.profile?.full_name ?? "Unnamed student"}
           </h1>
-          {!student.is_active && <Badge variant="destructive">Deactivated</Badge>}
+          {!student.is_active && <ToneBadge tone="neutral">Deactivated</ToneBadge>}
           {student.is_active && !student.is_available && (
-            <Badge variant="secondary">Unavailable</Badge>
+            <ToneBadge tone="waiting">Unavailable</ToneBadge>
           )}
         </div>
         <p className="text-muted-foreground text-sm">

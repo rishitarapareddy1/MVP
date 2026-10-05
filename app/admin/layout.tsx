@@ -1,21 +1,17 @@
-import { AppHeader } from "@/components/app-header";
+import { AdminShell } from "@/components/shell/admin-shell";
 import { requireAdmin } from "@/lib/auth/session";
-
-const NAV = [
-  { href: "/admin/projects", label: "Projects" },
-  { href: "/admin/students", label: "Students" },
-  { href: "/admin/assessments", label: "Assessments" },
-  { href: "/admin/submissions", label: "Grading" },
-  { href: "/admin/metrics", label: "Metrics" },
-];
+import { loadInbox } from "@/lib/db/inbox";
+import { expireStaleOffers } from "@/lib/db/offers";
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   const profile = await requireAdmin();
+  // Expire overdue offers first so the to-do counts are accurate.
+  await expireStaleOffers();
+  const inbox = await loadInbox();
 
   return (
-    <>
-      <AppHeader homeHref="/admin" label="Admin" email={profile.email} nav={NAV} />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</main>
-    </>
+    <AdminShell email={profile.email} todayCount={inbox.count} gradingCount={inbox.toGrade.length}>
+      {children}
+    </AdminShell>
   );
 }

@@ -21,22 +21,24 @@ export default async function FeedbackPage({ params }: PageProps<"/feedback/[tok
 
   return (
     <main className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-6 px-4 py-12">
-      <div className="flex flex-col gap-2">
-        <p className="text-muted-foreground text-sm">{context.businessName}</p>
-        <h1 className="text-2xl font-semibold tracking-tight">How did {studentName} do?</h1>
-        <p className="text-muted-foreground">
-          Feedback on <span className="text-foreground font-medium">{context.title}</span>. Takes
-          about a minute.
-        </p>
-      </div>
+      <div className="bg-card flex flex-col gap-6 rounded-2xl border p-6 shadow-sm sm:p-8">
+        <div className="flex flex-col gap-2">
+          <p className="text-muted-foreground text-sm">{context.businessName}</p>
+          <h1 className="text-2xl font-semibold tracking-tight">How did {studentName} do?</h1>
+          <p className="text-muted-foreground">
+            Feedback on <span className="text-foreground font-medium">{context.title}</span>. Takes
+            about a minute.
+          </p>
+        </div>
 
-      {context.alreadySubmitted ? (
-        <p>Feedback for this project has already been submitted. Thank you!</p>
-      ) : context.status !== "paid" ? (
-        <p>This feedback form isn&apos;t open yet. We&apos;ll send you the link when it is.</p>
-      ) : (
-        <FeedbackForm token={token} studentName={studentName} />
-      )}
+        {context.alreadySubmitted ? (
+          <p>Feedback for this project has already been submitted. Thank you!</p>
+        ) : context.status !== "paid" ? (
+          <p>This feedback form isn&apos;t open yet. We&apos;ll send you the link when it is.</p>
+        ) : (
+          <FeedbackForm token={token} studentName={studentName} />
+        )}
+      </div>
     </main>
   );
 }

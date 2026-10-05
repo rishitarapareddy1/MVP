@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page-header";
+import { ToneBadge } from "@/components/status-badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Table,
@@ -19,17 +20,20 @@ export default async function AdminAssessmentsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold">Assessments</h1>
-        <Link href="/admin/assessments/new" className={buttonVariants()}>
-          New assessment
-        </Link>
-      </div>
+      <PageHeader
+        title="Assessments"
+        description="Short, real-world tasks students pass to qualify for each kind of project."
+        actions={
+          <Link href="/admin/assessments/new" className={buttonVariants()}>
+            New assessment
+          </Link>
+        }
+      />
 
       {assessments.length === 0 ? (
         <p className="text-muted-foreground">No assessments yet.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border">
+        <div className="bg-card overflow-x-auto rounded-xl border">
           <Table>
             <TableHeader>
               <TableRow>
@@ -59,9 +63,9 @@ export default async function AdminAssessmentsPage() {
                     <TableCell className="text-right tabular-nums">{count("submitted")}</TableCell>
                     <TableCell>
                       {a.is_active ? (
-                        <Badge variant="outline">Active</Badge>
+                        <ToneBadge tone="done">Active</ToneBadge>
                       ) : (
-                        <Badge variant="secondary">Inactive</Badge>
+                        <ToneBadge tone="neutral">Inactive</ToneBadge>
                       )}
                     </TableCell>
                   </TableRow>

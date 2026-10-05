@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { ToneBadge, type Tone } from "@/components/status-badge";
 import type { OfferStatus } from "@/lib/db/types";
 
 const LABELS: Record<OfferStatus, string> = {
@@ -9,14 +9,14 @@ const LABELS: Record<OfferStatus, string> = {
   withdrawn: "Filled by someone else",
 };
 
-const VARIANT: Record<OfferStatus, "default" | "secondary" | "outline" | "destructive"> = {
-  pending: "outline",
-  accepted: "default",
-  declined: "secondary",
-  expired: "secondary",
-  withdrawn: "secondary",
+const TONE: Record<OfferStatus, Tone> = {
+  pending: "waiting",
+  accepted: "done",
+  declined: "neutral",
+  expired: "neutral",
+  withdrawn: "neutral",
 };
 
 export function OfferStatusBadge({ status }: { status: OfferStatus }) {
-  return <Badge variant={VARIANT[status]}>{LABELS[status]}</Badge>;
+  return <ToneBadge tone={TONE[status]}>{LABELS[status]}</ToneBadge>;
 }
