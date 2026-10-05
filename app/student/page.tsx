@@ -9,6 +9,7 @@ import { expireStaleOffers, listOwnActiveProjects, listOwnOffers } from "@/lib/d
 import { getOwnStudent } from "@/lib/db/students";
 import { formatCents, formatDateOnly, formatDateTime } from "@/lib/format";
 import { onboardingChecklist } from "@/lib/students/checklist";
+import { isUniversityEmail } from "@/lib/students/verification";
 import { cn } from "@/lib/utils";
 
 export default async function StudentDashboard() {
@@ -21,7 +22,12 @@ export default async function StudentDashboard() {
     listOwnActiveProjects(me.id),
   ]);
   const firstName = student.profile?.full_name?.split(" ")[0];
-  const steps = onboardingChecklist(student, student.profile?.full_name ?? null, statuses);
+  // Students who log in with Gmail etc. must confirm a university email first.
+  const needsUniversityEmail = !isUniversityEmail(me.email);
+  const steps = onboardingChecklist(student, student.profile?.full_name ?? null, statuses, {
+    needed: needsUniversityEmail,
+    verified: !!student.university_email_verified_at,
+  });
   const doneSteps = steps.filter((s) => s.done).length;
   const pendingOffers = offers.filter((o) => o.status === "pending" && o.project);
 
@@ -75,7 +81,7 @@ export default async function StudentDashboard() {
     hero = (
       <Hero
         icon={ArrowRight}
-        eyebrow={`Step ${doneSteps + 1} of ${steps.length}`}
+        eyebrow={`Step ${steps.indexOf(nextSetup) + 1} of ${steps.length}`}
         title={nextSetup.label}
         detail={nextSetup.detail ?? "Finish setup to start getting matched to paid projects."}
         href={nextSetup.href}

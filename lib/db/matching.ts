@@ -2,6 +2,7 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import type { ProjectCategory } from "./types";
 import type { StatsRows } from "@/lib/matching/stats";
+import { isVerifiedStudent } from "@/lib/students/verification";
 
 /**
  * Loads every row the matching stats need, in parallel. Admin-only
@@ -17,7 +18,7 @@ export async function loadStatsRows(): Promise<{
     supabase
       .from("students")
       .select(
-        "id, is_active, is_available, skills, interested_categories, hours_per_week, major, profile:profiles(full_name, email)",
+        "id, is_active, is_available, university_email_verified_at, skills, interested_categories, hours_per_week, major, profile:profiles(full_name, email)",
       ),
     supabase
       .from("assessment_submissions")
@@ -46,6 +47,7 @@ export async function loadStatsRows(): Promise<{
         id: s.id,
         is_active: s.is_active,
         is_available: s.is_available,
+        is_verified: isVerifiedStudent(s.profile?.email ?? "", s.university_email_verified_at),
         skills: s.skills,
         interested_categories: s.interested_categories,
         hours_per_week: s.hours_per_week,

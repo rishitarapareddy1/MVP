@@ -61,3 +61,20 @@ describe("onboardingChecklist", () => {
     );
   });
 });
+
+describe("university email step", () => {
+  it("is added first for Gmail students and tracks verification", () => {
+    const steps = onboardingChecklist(complete, "Maya", [], { needed: true, verified: false });
+    expect(steps[0].label).toBe("Verify your university email");
+    expect(steps[0].done).toBe(false);
+    expect(
+      onboardingChecklist(complete, "Maya", [], { needed: true, verified: true })[0].done,
+    ).toBe(true);
+  });
+
+  it("is absent for students who log in with a university email", () => {
+    expect(onboardingChecklist(complete, "Maya", []).map((s) => s.label)).not.toContain(
+      "Verify your university email",
+    );
+  });
+});

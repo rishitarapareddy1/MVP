@@ -49,7 +49,15 @@ export function PublicShell({
         <div className="text-muted-foreground mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <BrandMark className="text-foreground" />
           <span>{BRAND.tagline}</span>
-          <span>© {new Date().getFullYear()}</span>
+          <span className="flex gap-4">
+            <Link href="/privacy" className="hover:text-foreground">
+              Privacy
+            </Link>
+            <a href={`mailto:${BRAND.contactEmail}`} className="hover:text-foreground">
+              Contact
+            </a>
+            <span>© {new Date().getFullYear()}</span>
+          </span>
         </div>
       </footer>
     </div>

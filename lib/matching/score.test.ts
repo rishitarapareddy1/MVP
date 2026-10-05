@@ -17,6 +17,7 @@ const student: StudentWithStats = {
   id: "s1",
   is_active: true,
   is_available: true,
+  is_verified: true,
   skills: ["excel", "sql"],
   interested_categories: ["data_cleanup"],
   hours_per_week: 5,
@@ -60,6 +61,21 @@ describe("hard filters", () => {
       overrideAssessment: true,
     });
     expect(r.ineligibleReasons).toEqual(["Marked as unavailable"]);
+  });
+
+  it("an unverified student (e.g. Gmail without a confirmed university email) is ineligible", () => {
+    const r = scoreMatch({ project, student: { ...student, is_verified: false }, now });
+    expect(r.eligible).toBe(false);
+    expect(r.ineligibleReasons).toEqual(["Hasn't verified a university email"]);
+    // The assessment override doesn't bypass verification.
+    expect(
+      scoreMatch({
+        project,
+        student: { ...student, is_verified: false },
+        now,
+        overrideAssessment: true,
+      }).eligible,
+    ).toBe(false);
   });
 
   it("lists every failed filter", () => {

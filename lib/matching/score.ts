@@ -23,6 +23,8 @@ export type StudentWithStats = {
   id: string;
   is_active: boolean;
   is_available: boolean;
+  /** Logged in with a university email, or confirmed one by code. */
+  is_verified: boolean;
   skills: string[];
   interested_categories: ProjectCategory[];
   hours_per_week: number | null;
@@ -89,6 +91,7 @@ export function scoreMatch({
   const ineligibleReasons: string[] = [];
   if (!student.is_active) ineligibleReasons.push("Deactivated by admin");
   if (!student.is_available) ineligibleReasons.push("Marked as unavailable");
+  if (!student.is_verified) ineligibleReasons.push("Hasn't verified a university email");
   if (!assessment && !overrideAssessment) {
     ineligibleReasons.push(`No passed assessment in ${category}`);
   }

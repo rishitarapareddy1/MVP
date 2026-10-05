@@ -276,6 +276,53 @@ export type Database = {
           },
         ];
       };
+      email_verification_codes: {
+        Row: {
+          attempts: number;
+          code_hash: string;
+          created_at: string;
+          email: string;
+          expires_at: string;
+          last_sent_at: string;
+          sends_in_window: number;
+          student_id: string;
+          updated_at: string;
+          window_started_at: string;
+        };
+        Insert: {
+          attempts?: number;
+          code_hash: string;
+          created_at?: string;
+          email: string;
+          expires_at: string;
+          last_sent_at?: string;
+          sends_in_window?: number;
+          student_id: string;
+          updated_at?: string;
+          window_started_at?: string;
+        };
+        Update: {
+          attempts?: number;
+          code_hash?: string;
+          created_at?: string;
+          email?: string;
+          expires_at?: string;
+          last_sent_at?: string;
+          sends_in_window?: number;
+          student_id?: string;
+          updated_at?: string;
+          window_started_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "email_verification_codes_student_id_fkey";
+            columns: ["student_id"];
+            isOneToOne: true;
+            referencedRelation: "students";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       feedback: {
         Row: {
           created_at: string;
@@ -635,6 +682,8 @@ export type Database = {
           portfolio_links: string[];
           resume_path: string | null;
           skills: string[];
+          university_email: string | null;
+          university_email_verified_at: string | null;
           updated_at: string;
         };
         Insert: {
@@ -650,6 +699,8 @@ export type Database = {
           portfolio_links?: string[];
           resume_path?: string | null;
           skills?: string[];
+          university_email?: string | null;
+          university_email_verified_at?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -665,6 +716,8 @@ export type Database = {
           portfolio_links?: string[];
           resume_path?: string | null;
           skills?: string[];
+          university_email?: string | null;
+          university_email_verified_at?: string | null;
           updated_at?: string;
         };
         Relationships: [

@@ -11,6 +11,7 @@ import { getStudentForAdmin } from "@/lib/db/students";
 import { formatDate, formatDateOnly, todayInChicago } from "@/lib/format";
 import { CATEGORY_LABELS, OUTCOME_LABELS } from "@/lib/projects/labels";
 import { isId } from "@/lib/validation/id";
+import { isUniversityEmail } from "@/lib/students/verification";
 import { ActiveToggle } from "./active-toggle";
 import { OutcomeForm } from "./outcome-form";
 
@@ -51,6 +52,19 @@ export default async function AdminStudentPage({ params }: PageProps<"/admin/stu
         </CardHeader>
         <CardContent className="flex flex-col gap-4 text-sm">
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5">
+            <dt className="text-muted-foreground">University email</dt>
+            <dd>
+              {isUniversityEmail(student.profile?.email ?? "") ? (
+                <ToneBadge tone="done">Verified (login email)</ToneBadge>
+              ) : student.university_email_verified_at ? (
+                <span className="flex flex-wrap items-center gap-2">
+                  {student.university_email}
+                  <ToneBadge tone="done">Verified</ToneBadge>
+                </span>
+              ) : (
+                <ToneBadge tone="action">Not verified: can&apos;t be matched yet</ToneBadge>
+              )}
+            </dd>
             <dt className="text-muted-foreground">Major</dt>
             <dd>{student.major ?? "—"}</dd>
             <dt className="text-muted-foreground">Graduates</dt>

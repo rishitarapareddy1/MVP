@@ -27,13 +27,27 @@ export function onboardingChecklist(
   student: ProfileFields,
   fullName: string | null,
   submissionStatuses: AssessmentStatus[],
+  /** Only for students who log in with a non-university email (e.g. Gmail). */
+  universityEmail: { needed: boolean; verified: boolean } = { needed: false, verified: true },
 ): ChecklistStep[] {
   const missing = missingProfileFields(student, fullName);
   const submitted = submissionStatuses.length > 0;
   const passed = submissionStatuses.includes("passed");
   const awaitingGrade = submissionStatuses.includes("submitted");
 
+  const verifyStep: ChecklistStep[] = universityEmail.needed
+    ? [
+        {
+          label: "Verify your university email",
+          done: universityEmail.verified,
+          href: "/student/profile",
+          detail: universityEmail.verified ? undefined : "Needed before you can get project offers",
+        },
+      ]
+    : [];
+
   return [
+    ...verifyStep,
     {
       label: "Complete your profile",
       done: missing.length === 0,

@@ -11,6 +11,7 @@ export type StatsRows = {
     id: string;
     is_active: boolean;
     is_available: boolean;
+    is_verified: boolean;
     skills: string[];
     interested_categories: ProjectCategory[];
     hours_per_week: number | null;

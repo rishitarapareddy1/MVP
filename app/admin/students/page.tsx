@@ -54,6 +54,11 @@ export default async function AdminStudentsPage() {
                       {s.email}
                       {s.major ? ` · ${s.major}` : ""}
                     </div>
+                    {!s.is_verified && (
+                      <div className="mt-1">
+                        <ToneBadge tone="action">University email not verified</ToneBadge>
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell className="hidden max-w-48 truncate text-sm xl:table-cell">
                     {s.skills.join(", ") || "—"}
