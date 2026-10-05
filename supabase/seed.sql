@@ -222,26 +222,28 @@ values
 -- ----------------------------------------------------------------------------
 -- Offers
 -- ----------------------------------------------------------------------------
-insert into public.offers (project_id, student_id, status, match_score, match_breakdown, admin_note, expires_at, responded_at)
+-- created_at is set explicitly so every offer is sent before it was answered
+-- (and expires 48 hours after it was sent), which keeps the metrics sane.
+insert into public.offers (project_id, student_id, status, match_score, match_breakdown, admin_note, created_at, expires_at, responded_at)
 values
   -- Project 4 (offered): two pending
   ('c0000000-0000-0000-0000-000000000004', '50000000-0000-0000-0000-000000000002', 'pending', 60,
    '[{"label":"Assessment score (84)","points":25},{"label":"Required skills matched (1)","points":8},{"label":"Preferred skills matched (2)","points":6},{"label":"Availability","points":10},{"label":"Interested in category","points":5}]',
-   'Your coffee shop assessment was great, this is a similar project.', now() + interval '36 hours', null),
+   'Your coffee shop assessment was great, this is a similar project.', now() - interval '12 hours', now() + interval '36 hours', null),
   ('c0000000-0000-0000-0000-000000000004', '50000000-0000-0000-0000-000000000005', 'pending', 55,
    '[{"label":"Assessment score (92)","points":28},{"label":"Required skills matched (1)","points":8},{"label":"Preferred skills matched (1)","points":3},{"label":"Availability","points":10},{"label":"Interested in category","points":5}]',
-   null, now() + interval '36 hours', null),
+   null, now() - interval '12 hours', now() + interval '36 hours', null),
   -- Project 5 (in_progress): Maya accepted
   ('c0000000-0000-0000-0000-000000000005', '50000000-0000-0000-0000-000000000001', 'accepted', 52,
    '[{"label":"Required skills matched (1)","points":8},{"label":"Availability","points":10}]',
-   null, now() - interval '3 days', now() - interval '4 days'),
+   null, now() - interval '5 days', now() - interval '3 days', now() - interval '4 days'),
   -- Project 6 (closed): Aisha accepted, Sofia's offer was withdrawn
   ('c0000000-0000-0000-0000-000000000006', '50000000-0000-0000-0000-000000000007', 'accepted', 71,
    '[{"label":"Assessment score (86)","points":26},{"label":"Required skills matched (2)","points":16},{"label":"Availability","points":10},{"label":"Starter bonus","points":10},{"label":"Interested in category","points":5}]',
-   null, now() - interval '38 days', now() - interval '39 days'),
+   null, now() - interval '40 days', now() - interval '38 days', now() - interval '39 days'),
   ('c0000000-0000-0000-0000-000000000006', '50000000-0000-0000-0000-000000000003', 'withdrawn', 58,
    '[{"label":"Assessment score (78)","points":23},{"label":"Required skills matched (1)","points":8},{"label":"Availability","points":10}]',
-   null, now() - interval '38 days', null);
+   null, now() - interval '40 days', now() - interval '38 days', null);
 
 -- ----------------------------------------------------------------------------
 -- Closed project: deliverable, payments, feedback, outcome

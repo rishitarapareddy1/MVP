@@ -6,6 +6,7 @@ const NAV = [
   { href: "/admin/students", label: "Students" },
   { href: "/admin/assessments", label: "Assessments" },
   { href: "/admin/submissions", label: "Grading" },
+  { href: "/admin/metrics", label: "Metrics" },
 ];
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
