@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { todayInChicago } from "@/lib/format";
+import { projectsWithFeedbackLinkSent } from "./notifications";
 
 /**
  * Everything waiting on the admin, grouped by what to do next. Powers the
@@ -55,6 +56,9 @@ export const loadInbox = cache(async () => {
   for (const r of [projects, expiring, submissions, followUps]) if (r.error) throw r.error;
 
   const p = projects.data!;
+  const linkSent = await projectsWithFeedbackLinkSent(
+    p.filter((x) => x.status === "paid").map((x) => x.id),
+  );
   const today = todayInChicago();
   const byStatus = (s: string) => p.filter((x) => x.status === s);
 
@@ -65,7 +69,8 @@ export const loadInbox = cache(async () => {
     expiringOffers: expiring.data!,
     toReview: byStatus("delivered"),
     toRecordPayment: byStatus("approved"),
-    toSendFeedback: byStatus("paid").filter((x) => !x.feedback),
+    // Paid, no feedback yet, and the link hasn't been emailed (then it's the business's turn).
+    toSendFeedback: byStatus("paid").filter((x) => !x.feedback && !linkSent.has(x.id)),
     // Work that's past its deadline and not delivered yet.
     overdue: p.filter(
       (x) => ["assigned", "in_progress"].includes(x.status) && x.deadline && x.deadline < today,

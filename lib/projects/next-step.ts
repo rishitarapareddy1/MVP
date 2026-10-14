@@ -54,7 +54,8 @@ export const NEXT_STEP: Record<ProjectStatus, { title: string; detail: string; t
     },
     paid: {
       title: "Send the feedback link",
-      detail: "Email the business their feedback link. Submitting it closes the project.",
+      detail:
+        "Email the business their feedback link (Delivery tab). Submitting it closes the project.",
       tab: "delivery",
     },
     closed: {

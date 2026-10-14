@@ -38,6 +38,7 @@ import { NEXT_STEP, type ProjectTab } from "@/lib/projects/next-step";
 import { canTransition, isScopeEditable, manualTransitionsFrom } from "@/lib/projects/transitions";
 import { getSiteOrigin } from "@/lib/site";
 import { isId } from "@/lib/validation/id";
+import { FeedbackEmailButton } from "./feedback-email-button";
 import { PaymentsPanel } from "./payments-panel";
 import { ScopeForm } from "./scope-form";
 import { ShortlistPanel, type ShortlistRow } from "./shortlist-panel";
@@ -153,6 +154,9 @@ export default async function AdminProjectPage({
           deliverables={deliverables}
           payments={payments}
           feedback={feedback}
+          feedbackLinkSentAt={
+            activity.find((a) => a.action === "feedback_link_sent")?.created_at ?? null
+          }
         />
       )}
       {tab === "activity" && <ActivityTab activity={activity} offers={offers} />}
@@ -365,11 +369,14 @@ async function DeliveryTab({
   deliverables,
   payments,
   feedback,
+  feedbackLinkSentAt,
 }: {
   project: Project;
   deliverables: Awaited<ReturnType<typeof listProjectDeliverables>>;
   payments: Awaited<ReturnType<typeof listProjectPayments>>;
   feedback: Awaited<ReturnType<typeof getProjectFeedback>>;
+  /** Latest time the feedback link was emailed (activity is newest first). */
+  feedbackLinkSentAt: string | null;
 }) {
   if (!POST_ASSIGNMENT.includes(project.status)) {
     return (
@@ -488,9 +495,17 @@ async function DeliveryTab({
               <div className="flex flex-col gap-3 text-sm">
                 <p className="text-muted-foreground">
                   {project.status === "paid"
-                    ? "Email this link to the business. Submitting it closes the project."
+                    ? "Send the business its private feedback link. Submitting it closes the project."
                     : "The link opens once the project is marked Paid."}
                 </p>
+                {project.status === "paid" && project.business?.contact_email && (
+                  <FeedbackEmailButton
+                    projectId={project.id}
+                    contactEmail={project.business.contact_email}
+                    sentAt={feedbackLinkSentAt ? formatDateTime(feedbackLinkSentAt) : null}
+                  />
+                )}
+                <p className="text-muted-foreground text-xs">Or copy it into your own email:</p>
                 <div className="flex items-center gap-2">
                   <code className="bg-muted min-w-0 flex-1 truncate rounded-md px-2 py-1.5 text-xs">
                     {feedbackUrl}
@@ -567,6 +582,8 @@ function describeActivity(
       return `Offer accepted by ${who}`;
     case "offer_declined":
       return `Offer declined by ${who}`;
+    case "feedback_link_sent":
+      return "Feedback link emailed to the business";
     case "offer_expired":
       return `Offer to ${who} expired`;
     default:

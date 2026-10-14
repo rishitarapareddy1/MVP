@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/session";
 import { sendOffers, type NewOffer } from "@/lib/db/offers";
+import { notifyOffersSent } from "@/lib/email/notify";
 import { getProjectDetail } from "@/lib/db/projects";
 import { getShortlist } from "@/lib/matching/shortlist";
 import { canTransition } from "@/lib/projects/transitions";
@@ -33,7 +34,7 @@ export type OfferSelection = z.infer<typeof selectionsSchema>[number];
 export async function sendOffersAction(
   projectId: string,
   selections: OfferSelection[],
-): Promise<ActionResult> {
+): Promise<ActionResult<{ emailFailures: number }>> {
   await requireAdmin();
   if (!idSchema.safeParse(projectId).success) return fail("Unknown project");
   const parsed = selectionsSchema.safeParse(selections);
@@ -77,8 +78,12 @@ export async function sendOffersAction(
     return fail(message);
   }
 
+  // Offers are saved; now tell the students. A failed email doesn't undo
+  // anything; the admin just sees a warning and can follow up by hand.
+  const { failed } = await notifyOffersSent(projectId);
+
   revalidatePath(`/admin/projects/${projectId}`);
   revalidatePath("/admin/projects");
   revalidatePath("/admin");
-  return ok(undefined);
+  return ok({ emailFailures: failed });
 }

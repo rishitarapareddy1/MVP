@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { requireStudent } from "@/lib/auth/session";
-import { respondToOffer, type OfferResponse } from "@/lib/db/offers";
+import { getOwnOffer, respondToOffer, type OfferResponse } from "@/lib/db/offers";
+import { notifyOfferAccepted } from "@/lib/email/notify";
 import { isId } from "@/lib/validation/id";
 import { fail, ok, type ActionResult } from "@/lib/result";
 
@@ -19,10 +20,21 @@ export async function respond(
   offerId: string,
   response: "accept" | "decline",
 ): Promise<ActionResult<OfferResponse>> {
-  await requireStudent();
+  const me = await requireStudent();
   if (!isId(offerId)) return fail("Offer not found.");
 
   const result = await respondToOffer(offerId, response);
+  if (result === "accepted") {
+    // Let the admin know right away. Never blocks or undoes the acceptance.
+    const offer = await getOwnOffer(offerId, me.id);
+    if (offer?.project) {
+      await notifyOfferAccepted({
+        studentName: me.full_name ?? me.email,
+        projectTitle: offer.project.title,
+        projectId: offer.project_id,
+      });
+    }
+  }
   revalidatePath(`/student/offers/${offerId}`);
   revalidatePath("/student");
 

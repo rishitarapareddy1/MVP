@@ -63,8 +63,15 @@ export function ShortlistPanel({
           override: s.override,
         })),
       );
-      if (!result.ok) setError(result.error);
-      else setSelected(new Map());
+      if (!result.ok) return setError(result.error);
+      setSelected(new Map());
+      // The panel disappears once offers are out, so warn with an alert.
+      if (result.data.emailFailures > 0) {
+        alert(
+          `Offers were sent, but ${result.data.emailFailures} notification email(s) failed. ` +
+            "Let those students know by hand; their offers are on their dashboards.",
+        );
+      }
     });
   }
 
