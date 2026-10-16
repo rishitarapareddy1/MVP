@@ -42,7 +42,8 @@ export async function sendEmail(message: {
     rejected: info.rejected,
     response: info.response,
   });
-  if (info.rejected.length > 0) {
-    throw new Error(`Email rejected for: ${info.rejected.join(", ")}`);
+  const rejected = info.rejected ?? [];
+  if (rejected.length > 0) {
+    throw new Error(`Email rejected for: ${rejected.join(", ")}`);
   }
 }
