@@ -18,6 +18,8 @@ npm run dev                  # http://localhost:3000
 | ------------------- | ------------------------------- |
 | `npm run dev`       | Dev server                      |
 | `npm test`          | Unit tests (Vitest)             |
+| `npm run test:db`   | Database access-rule suite (PGlite, never touches the live DB) |
+| `npm run test:e2e`  | Browser smoke tests (Playwright; desktop + phone) |
 | `npm run typecheck` | `tsc --noEmit`                  |
 | `npm run lint`      | ESLint                          |
 | `npm run format`    | Prettier (with Tailwind sorting) |
@@ -47,3 +49,24 @@ supabase/migrations/ SQL migrations (Phase 1)
 - **Auth:** login codes are emailed through custom SMTP (set in the Supabase dashboard). If the
   domain changes, update `site_url` / `additional_redirect_urls` in `supabase/config.toml` and push
   only those settings (see git history for the minimal-config approach).
+
+## Testing
+
+- **Unit tests** (`npm test`): matching score, status rules, metrics, validation, email templates.
+- **Database access rules** (`npm run test:db`): rebuilds the schema from `supabase/migrations` +
+  `seed.sql` in an in-memory Postgres and checks who can read/write what (RLS, storage policies,
+  offer race rules, retake rules, feedback tokens). Run it after every migration.
+- **Browser smoke tests** (`npm run test:e2e`): every main page loads (signed out, admin, student),
+  guards redirect, no sideways scrolling on phones. Read-only. Point it at production with
+  `E2E_BASE_URL=https://mvp123-blond.vercel.app npm run test:e2e`.
+  First run: `npx playwright install chromium`.
+
+## Operations
+
+- **Daily job** (`/api/cron/daily`, Vercel Cron, 14:00 UTC): keeps Supabase from auto-pausing and
+  expires overdue offers. Protected by `CRON_SECRET`.
+- **Error alerts**: unexpected server errors are emailed to `ADMIN_EMAILS` (or `ALERT_EMAILS`) from
+  production only, at most once per error per 15 minutes.
+- **If the site can't reach the database** (`ENOTFOUND` / `fetch failed` in logs): check whether
+  Supabase paused the project and click Restore in the dashboard.
+

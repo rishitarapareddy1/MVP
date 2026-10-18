@@ -13,7 +13,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:types": "npx supabase gen types typescript --linked > lib/db/database.types.ts",
-    "db:push": "npx supabase db push"
+    "db:push": "npx supabase db push",
+    "test:db": "vitest run --config vitest.db.config.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -32,6 +34,8 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.19.0",
     "@types/nodemailer": "^8.0.2",
