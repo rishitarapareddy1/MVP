@@ -1,8 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createIntakeRequest } from "@/lib/db/intake";
-import { HONEYPOT_FIELD, intakeSchema } from "@/lib/validation/intake";
+import { createIntakeRequest, recentIntakeCounts } from "@/lib/db/intake";
+import { HONEYPOT_FIELD, intakeLimitReason, intakeSchema } from "@/lib/validation/intake";
 import { fail, failValidation, type ActionResult } from "@/lib/result";
 import { reportError } from "@/lib/errors/report";
 
@@ -18,6 +18,8 @@ export async function submitIntake(
   if (!parsed.success) return failValidation(parsed.error);
 
   try {
+    const limited = intakeLimitReason(await recentIntakeCounts(parsed.data.contact_email));
+    if (limited) return fail(limited);
     await createIntakeRequest(parsed.data);
   } catch (error) {
     await reportError("intake form", error);

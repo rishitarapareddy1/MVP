@@ -15,8 +15,15 @@ export const intakeSchema = z.object({
     z
       .string()
       .nullable()
-      .transform((v) => (v && !/^https?:\/\//i.test(v) ? `https://${v}` : v))
-      .pipe(z.url("Enter a valid website, like example.com").nullable()),
+      // Add https:// only when there's no scheme at all, so "ftp://..."
+      // stays as-is and is rejected below instead of becoming "https://ftp://...".
+      .transform((v) => (v && !/^[a-z][a-z0-9+.-]*:\/\//i.test(v) ? `https://${v}` : v))
+      // http(s) only: the admin sees this as a clickable link.
+      .pipe(
+        z
+          .url({ protocol: /^https?$/, message: "Enter a valid website, like example.com" })
+          .nullable(),
+      ),
   ),
   contact_name: z.string().trim().min(1, "Enter your name").max(120),
   contact_email: z.email("Enter a valid email address").trim().toLowerCase(),
@@ -38,3 +45,20 @@ export const intakeSchema = z.object({
 });
 
 export type IntakeInput = z.infer<typeof intakeSchema>;
+
+/** Flood limits for the public form (on top of the honeypot). */
+export const INTAKE_LIMITS = { perEmailPerDay: 3, totalPerHour: 30 } as const;
+
+/** Returns a message if this submission should be refused, otherwise null. */
+export function intakeLimitReason(counts: {
+  sameEmailLastDay: number;
+  allLastHour: number;
+}): string | null {
+  if (counts.sameEmailLastDay >= INTAKE_LIMITS.perEmailPerDay) {
+    return "We already have a few requests from you today. We'll be in touch soon, or email us if it's urgent.";
+  }
+  if (counts.allLastHour >= INTAKE_LIMITS.totalPerHour) {
+    return "We're getting a lot of requests right now. Please try again in an hour.";
+  }
+  return null;
+}

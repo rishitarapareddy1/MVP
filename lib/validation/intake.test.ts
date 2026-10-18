@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { intakeSchema } from "./intake";
+import { INTAKE_LIMITS, intakeLimitReason, intakeSchema } from "./intake";
 
 const valid = {
   business_name: "Green Street Bakery",
@@ -43,5 +43,29 @@ describe("intakeSchema", () => {
   it("rejects unknown enum values", () => {
     expect(intakeSchema.safeParse({ ...valid, budget_range: "1_million" }).success).toBe(false);
     expect(intakeSchema.safeParse({ ...valid, source: "tiktok" }).success).toBe(false);
+  });
+});
+
+describe("intake website", () => {
+  it("only accepts http(s) websites", () => {
+    expect(intakeSchema.safeParse({ ...valid, website: "javascript:alert(1)" }).success).toBe(
+      false,
+    );
+    expect(intakeSchema.safeParse({ ...valid, website: "ftp://example.com" }).success).toBe(false);
+  });
+});
+
+describe("intakeLimitReason", () => {
+  it("allows normal traffic", () => {
+    expect(intakeLimitReason({ sameEmailLastDay: 0, allLastHour: 0 })).toBeNull();
+  });
+
+  it("caps repeat submissions from one email and floods overall", () => {
+    expect(
+      intakeLimitReason({ sameEmailLastDay: INTAKE_LIMITS.perEmailPerDay, allLastHour: 0 }),
+    ).toMatch(/today/);
+    expect(
+      intakeLimitReason({ sameEmailLastDay: 0, allLastHour: INTAKE_LIMITS.totalPerHour }),
+    ).toMatch(/an hour/);
   });
 });

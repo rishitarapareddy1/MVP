@@ -55,3 +55,24 @@ export async function createIntakeRequest(input: IntakeInput): Promise<{ project
 
   return { projectId: project.id };
 }
+
+/** Recent submission counts for the flood limits (service role: no logged-in user). */
+export async function recentIntakeCounts(email: string) {
+  const supabase = createAdminClient();
+  const dayAgo = new Date(Date.now() - 24 * 3_600_000).toISOString();
+  const hourAgo = new Date(Date.now() - 3_600_000).toISOString();
+  const [sameEmail, all] = await Promise.all([
+    supabase
+      .from("projects")
+      .select("id, business:businesses!inner(contact_email)", { count: "exact", head: true })
+      .eq("business.contact_email", email)
+      .gte("created_at", dayAgo),
+    supabase
+      .from("projects")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", hourAgo),
+  ]);
+  if (sameEmail.error) throw sameEmail.error;
+  if (all.error) throw all.error;
+  return { sameEmailLastDay: sameEmail.count ?? 0, allLastHour: all.count ?? 0 };
+}
