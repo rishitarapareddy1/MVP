@@ -10,8 +10,12 @@
   /* Was "var(--font-sans)", which pointed at itself, so pages fell back to Times. */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-instrument-serif);
   --font-heading: var(--font-geist-sans);
   /* App-specific semantic colors (see :root for the values). */
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-cream: var(--cream);
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-soft: var(--brand-soft);
@@ -81,9 +85,14 @@
   --input: oklch(0.88 0.01 260);
   --ring: oklch(0.55 0.12 262);
 
-  --brand: oklch(0.76 0.15 62);
-  --brand-foreground: oklch(0.25 0.06 50);
-  --brand-soft: oklch(0.96 0.04 75);
+  /* Brand accent: a vivid orange "spark". Fills only, never body text. */
+  --brand: oklch(0.71 0.18 48);
+  --brand-foreground: oklch(0.22 0.06 45);
+  --brand-soft: oklch(0.955 0.045 65);
+  /* Editorial surfaces: deep ink blocks and warm cream sections. */
+  --ink: oklch(0.2 0.045 266);
+  --ink-foreground: oklch(0.97 0.01 85);
+  --cream: oklch(0.972 0.016 85);
   /* Status colors: used as soft badge fills with a dark text label. */
   --success: oklch(0.45 0.11 155);
   --success-soft: oklch(0.95 0.04 155);
@@ -165,5 +174,46 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Marketing helpers
+   --------------------------------------------------------------------------- */
+
+/* A faint square grid, faded out toward the edges. */
+.bg-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklch, var(--foreground) 6%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklch, var(--foreground) 6%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+
+/* Endless horizontal scroll for a row of items (duplicate the row once). */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+/* Respect people who turn off animations in their OS settings. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
   }
 }

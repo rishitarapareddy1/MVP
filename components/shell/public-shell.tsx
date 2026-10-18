@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { BrandMark } from "@/components/brand-mark";
 import { buttonVariants } from "@/components/ui/button";
 import { BRAND } from "@/lib/brand";
+import { cn } from "@/lib/utils";
 
 /** Header + footer for public pages (landing, request form, feedback, login). */
 export function PublicShell({
@@ -35,7 +36,10 @@ export function PublicShell({
                 {/* Hidden on phones: the hero already has this button. */}
                 <Link
                   href="/request"
-                  className={buttonVariants({ className: "hidden sm:inline-flex" })}
+                  className={cn(
+                    buttonVariants(),
+                    "bg-ink text-ink-foreground hover:bg-ink/90 hidden sm:inline-flex",
+                  )}
                 >
                   Request a project
                 </Link>

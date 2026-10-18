@@ -31,7 +31,9 @@ export function PageHeader({
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-semibold">{title}</h1>
+            <h1 className="text-ink text-2xl font-semibold tracking-[-0.025em] sm:text-3xl">
+              {title}
+            </h1>
             {meta}
           </div>
           {description && <p className="text-muted-foreground text-sm">{description}</p>}

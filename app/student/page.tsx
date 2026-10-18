@@ -105,7 +105,14 @@ export default async function StudentDashboard() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold">Hi{firstName ? `, ${firstName}` : ""} 👋</h1>
+        <h1 className="text-ink text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          Hi
+          {firstName && (
+            <>
+              , <span className="font-serif font-normal italic">{firstName}</span>
+            </>
+          )}
+        </h1>
         <p className="text-muted-foreground text-sm">Here&apos;s what&apos;s happening.</p>
       </div>
 
@@ -213,7 +220,7 @@ function Hero({
     <section
       className={cn(
         "flex flex-col gap-4 rounded-2xl border p-5 sm:flex-row sm:items-center sm:p-6",
-        quiet ? "bg-card" : "bg-primary text-primary-foreground border-primary",
+        quiet ? "bg-card" : "bg-ink text-ink-foreground border-ink",
       )}
     >
       <span
@@ -228,7 +235,7 @@ function Hero({
         <span
           className={cn(
             "text-xs font-semibold tracking-wide uppercase",
-            quiet ? "text-muted-foreground" : "text-primary-foreground/70",
+            quiet ? "text-muted-foreground" : "text-ink-foreground/70",
           )}
         >
           {eyebrow}
@@ -236,10 +243,7 @@ function Hero({
         <span className="text-lg font-semibold">{title}</span>
         {detail && (
           <span
-            className={cn(
-              "text-sm",
-              quiet ? "text-muted-foreground" : "text-primary-foreground/80",
-            )}
+            className={cn("text-sm", quiet ? "text-muted-foreground" : "text-ink-foreground/80")}
           >
             {detail}
           </span>

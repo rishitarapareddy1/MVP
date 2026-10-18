@@ -62,16 +62,16 @@ export function AdminShell({
           href={item.href}
           aria-current={isActive(item) ? "page" : undefined}
           className={cn(
-            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+            "relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
             isActive(item)
-              ? "bg-sidebar-accent text-sidebar-accent-foreground"
-              : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
+              ? "bg-ink-foreground/10 text-ink-foreground before:bg-brand before:absolute before:inset-y-1.5 before:-left-3 before:w-1 before:rounded-r-full"
+              : "text-ink-foreground/65 hover:bg-ink-foreground/5 hover:text-ink-foreground",
           )}
         >
           <item.icon className="size-4 shrink-0" aria-hidden />
           <span className="flex-1">{item.label}</span>
           {!!item.count && (
-            <span className="bg-brand text-brand-foreground min-w-5 rounded-full px-1.5 text-center text-xs font-semibold">
+            <span className="bg-brand text-brand-foreground min-w-5 rounded-full px-1.5 text-center text-xs font-bold">
               {item.count}
             </span>
           )}
@@ -81,12 +81,12 @@ export function AdminShell({
   );
 
   const footer = (
-    <div className="flex flex-col gap-2 border-t px-6 py-4">
-      <span className="text-muted-foreground truncate text-xs">{email}</span>
+    <div className="border-ink-foreground/10 flex flex-col gap-2 border-t px-6 py-4">
+      <span className="text-ink-foreground/50 truncate text-xs">{email}</span>
       <form action={signOut}>
         <button
           type="submit"
-          className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm"
+          className="text-ink-foreground/65 hover:text-ink-foreground flex items-center gap-2 text-sm"
         >
           <LogOut className="size-4" aria-hidden /> Sign out
         </button>
@@ -97,11 +97,11 @@ export function AdminShell({
   return (
     <div className="flex min-h-full flex-1">
       {/* Desktop sidebar */}
-      <aside className="bg-sidebar sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r lg:flex">
+      <aside className="bg-ink text-ink-foreground sticky top-0 hidden h-screen w-60 shrink-0 flex-col lg:flex">
         <div className="flex h-16 items-center px-6">
-          <BrandMark href="/admin" />
+          <BrandMark href="/admin" onDark />
         </div>
-        <span className="text-muted-foreground px-6 pb-2 text-xs font-medium tracking-wide uppercase">
+        <span className="text-ink-foreground/40 px-6 pb-2 text-[11px] font-semibold tracking-[0.14em] uppercase">
           Admin
         </span>
         {nav}
@@ -116,9 +116,9 @@ export function AdminShell({
             aria-label="Close menu"
             onClick={() => setOpen(false)}
           />
-          <aside className="bg-sidebar absolute inset-y-0 left-0 flex w-72 flex-col border-r shadow-xl">
+          <aside className="bg-ink text-ink-foreground absolute inset-y-0 left-0 flex w-72 flex-col shadow-xl">
             <div className="flex h-16 items-center justify-between px-6">
-              <BrandMark href="/admin" />
+              <BrandMark href="/admin" onDark />
               <button onClick={() => setOpen(false)} aria-label="Close menu">
                 <X className="size-5" />
               </button>

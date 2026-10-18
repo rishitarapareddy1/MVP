@@ -47,7 +47,16 @@ export default async function AdminTodayPage() {
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
-        title={`${greeting()}${firstName ? `, ${firstName}` : ""}`}
+        title={
+          <>
+            {greeting()}
+            {firstName && (
+              <>
+                , <span className="font-serif font-normal italic">{firstName}</span>
+              </>
+            )}
+          </>
+        }
         description={
           inbox.count === 0
             ? "You're all caught up."

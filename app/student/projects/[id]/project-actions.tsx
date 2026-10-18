@@ -14,7 +14,8 @@ export function StartButton({ projectId }: { projectId: string }) {
   return (
     <div className="flex flex-col gap-2">
       <Button
-        className="self-start"
+        size="lg"
+        className="bg-brand text-brand-foreground hover:bg-brand/90 self-start"
         disabled={pending}
         onClick={() =>
           startTransition(async () => {
