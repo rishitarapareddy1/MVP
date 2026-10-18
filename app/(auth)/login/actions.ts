@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { canLogIn } from "@/lib/auth/roles";
+import { allowedDomainsLabel, canLogIn } from "@/lib/auth/roles";
 import { finishLogin } from "@/lib/auth/finish-login";
 import { loginSchema, verifyCodeSchema } from "@/lib/validation/auth";
 import { fail, ok, type ActionResult } from "@/lib/result";
@@ -20,7 +20,7 @@ export async function sendLoginCode(
 
   // Check the domain before Supabase creates an account or sends an email.
   if (!canLogIn(email)) {
-    return fail("Please use your @illinois.edu email address.");
+    return fail(`Please use your ${allowedDomainsLabel()} email address.`);
   }
 
   // The same email may also contain a link if the template has one; point it
@@ -73,7 +73,7 @@ export async function verifyLoginCode(
   const destination = await finishLogin(data.user);
   if (!destination) {
     await supabase.auth.signOut();
-    return fail("Please use your @illinois.edu email address.");
+    return fail(`Please use your ${allowedDomainsLabel()} email address.`);
   }
   // redirect() throws, so it must be outside any try/catch.
   redirect(destination);

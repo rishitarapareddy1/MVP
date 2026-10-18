@@ -103,7 +103,7 @@ beforeAll(async () => {
 });
 
 describe("seed", () => {
-  it("loads the expected demo data", async () => {
+  it("loads the expected demo data (3 seed + 2 tech assessments from migrations)", async () => {
     const r = (
       await db.query<Record<string, number>>(`select
         (select count(*)::int from profiles where role='admin') admins,
@@ -111,7 +111,7 @@ describe("seed", () => {
         (select count(*)::int from projects) projects,
         (select count(*)::int from assessments) assessments`)
     ).rows[0];
-    expect(r).toEqual({ admins: 1, students: 8, projects: 6, assessments: 3 });
+    expect(r).toEqual({ admins: 1, students: 8, projects: 6, assessments: 5 });
   });
 });
 
@@ -141,7 +141,7 @@ describe("what students can see", () => {
   });
 
   it("active assessments are visible to students", async () => {
-    expect(await count(JORDAN, "select count(*) n from assessments")).toBe(3);
+    expect(await count(JORDAN, "select count(*) n from assessments")).toBe(5);
   });
 
   it("admins see everything", async () => {

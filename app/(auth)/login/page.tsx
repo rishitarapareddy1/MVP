@@ -1,8 +1,9 @@
 import Link from "next/link";
+import { allowedDomainsLabel } from "@/lib/auth/roles";
 import { LoginForm } from "./login-form";
 
 const ERROR_MESSAGES: Record<string, string> = {
-  domain: "That email isn't eligible. Students must sign in with an @illinois.edu address.",
+  domain: `That email isn't eligible. Students must sign in with an ${allowedDomainsLabel()} address.`,
   link: "That login link is invalid or has expired. Please request a new one.",
 };
 
@@ -17,8 +18,9 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
           <div className="flex flex-col gap-1.5">
             <h1 className="text-2xl font-semibold">Log in</h1>
             <p className="text-muted-foreground text-sm">
-              Students: use your @illinois.edu email. We&apos;ll email you a one-time code, no
-              password needed.
+              Students: sign in with your {allowedDomainsLabel()} email. We&apos;ll email you a
+              one-time code, no password needed. Not using a university address? You&apos;ll confirm
+              one on your profile before getting offers.
             </p>
           </div>
           {errorMessage && (

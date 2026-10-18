@@ -65,7 +65,7 @@ export function ProfileForm({ student }: { student: OwnStudent }) {
         <FormField
           id="skills"
           label="Skills"
-          hint="Comma-separated, e.g. excel, sql, python, market research"
+          hint="Comma-separated, e.g. excel, sql, market research, react, python, figma"
           error={errors.skills}
         >
           <Input

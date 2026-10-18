@@ -75,7 +75,7 @@ export function IntakeForm({ minDeadline }: { minDeadline: string }) {
       <FormField
         id="description"
         label="Describe the task in your own words"
-        hint="What do you need, and what would you like to get back?"
+        hint="What do you need, and what would you like back? E.g. 'compare our 5 closest competitors' or 'build a simple booking page for our site'."
         error={errors.description}
       >
         <Textarea

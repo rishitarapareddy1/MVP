@@ -26,3 +26,12 @@ export function isAllowedStudentEmail(
 export function canLogIn(email: string): boolean {
   return isAdminEmail(email) || isAllowedStudentEmail(email);
 }
+
+/** "@illinois.edu or @gmail.com", for messages shown to students. */
+export function allowedDomainsLabel(
+  allowedDomains: string[] = parseList(process.env.ALLOWED_STUDENT_EMAIL_DOMAINS),
+): string {
+  const parts = allowedDomains.map((d) => `@${d}`);
+  if (parts.length <= 1) return parts[0] ?? "a university";
+  return `${parts.slice(0, -1).join(", ")} or ${parts.at(-1)}`;
+}

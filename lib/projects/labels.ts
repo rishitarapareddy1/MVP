@@ -27,6 +27,8 @@ export const CATEGORY_LABELS: Record<ProjectCategory, string> = {
   presentation: "Presentation",
   website_qa: "Website QA",
   social_media_analysis: "Social media analysis",
+  web_development: "Web development",
+  software_development: "Software & scripts",
   other: "Other",
 };
 

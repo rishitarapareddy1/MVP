@@ -21,6 +21,8 @@ const PROJECT_TYPES = [
   "Presentations",
   "Website QA",
   "Social media analysis",
+  "Web development",
+  "Scripts & automation",
 ];
 
 export default function Home() {
@@ -49,7 +51,7 @@ function Hero() {
         <div className="flex flex-col gap-7">
           <span className="bg-card text-foreground w-fit rounded-full border px-3 py-1 text-xs font-medium shadow-xs">
             <span className="bg-brand mr-2 inline-block size-1.5 -translate-y-px rounded-full align-middle" />
-            Scoped and priced up front · $50–$500 projects
+            Research, data and tech projects · scoped and priced up front
           </span>
           <h1 className="text-ink text-5xl leading-[1.02] font-semibold tracking-[-0.035em] text-balance sm:text-6xl lg:text-7xl">
             Real work, done by{" "}
@@ -63,9 +65,9 @@ function Hero() {
             students.
           </h1>
           <p className="text-muted-foreground max-w-xl text-lg text-pretty sm:text-xl">
-            Research, data cleanup, lead lists and spreadsheets. Tell us what you need. We scope it,
-            agree a price with you, and match it to a university student who has already passed a
-            skills test for that exact kind of work.
+            Research, data cleanup, spreadsheets, and small web or software builds. Tell us what you
+            need. We scope it, agree a price with you, and match it to a university student who has
+            already passed a skills test for that exact kind of work.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
@@ -252,11 +254,11 @@ function Audiences() {
       <div className="bg-brand text-brand-foreground flex flex-col gap-6 rounded-3xl p-8 sm:p-10">
         <Eyebrow className="text-brand-foreground/70">If you run a business</Eyebrow>
         <h3 className="text-3xl font-semibold tracking-[-0.02em] text-balance">
-          Get the research and data work done without hiring.
+          Get research, data and tech work done without hiring.
         </h3>
         <Checklist
           items={[
-            "Small, well-defined projects of 2–10 hours",
+            "Small, well-defined projects, from research to code",
             "A clear deliverable and price before work starts",
             "Students vetted with real skills tests",
             "Feedback that helps you spot a future hire",
@@ -353,15 +355,19 @@ function Faq() {
   const qa: [string, ReactNode][] = [
     [
       "How much does a project cost?",
-      "Most projects are between $50 and $500, depending on the work. We agree on the price with you before anything starts.",
+      "Most research and data projects are between $50 and $500. Tech projects like a website or a script are priced by scope. Either way, we agree on the price with you before anything starts.",
     ],
     [
       "Who does the work?",
       "University students who have passed a short skills assessment for that type of project, graded on a rubric. We pick the best fit based on that score, their skills, ratings from past projects and their availability.",
     ],
     [
+      "Can students do technical work?",
+      "Yes. Alongside research and data work, students can take on small tech contracts: a landing page, a small web app, a script or an integration. They qualify through the same kind of hands-on assessment.",
+    ],
+    [
       "How long does it take?",
-      "Projects are sized at roughly 2 to 10 hours of work. We set the deadline together while scoping.",
+      "Research and data projects are usually a few hours of work; tech builds can take longer. We set the deadline together while scoping.",
     ],
     [
       "What if the work needs changes?",

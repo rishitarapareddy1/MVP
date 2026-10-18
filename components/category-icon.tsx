@@ -1,5 +1,6 @@
 import {
   BarChart3,
+  Code2,
   Globe,
   LineChart,
   Megaphone,
@@ -7,6 +8,7 @@ import {
   Search,
   Shapes,
   Table2,
+  Terminal,
   Users,
   Wand2,
   type LucideIcon,
@@ -25,6 +27,8 @@ export const CATEGORY_ICONS: Record<ProjectCategory, LucideIcon> = {
   presentation: Presentation,
   website_qa: Globe,
   social_media_analysis: Megaphone,
+  web_development: Code2,
+  software_development: Terminal,
   other: Shapes,
 };
 

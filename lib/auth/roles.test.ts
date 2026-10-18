@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isAdminEmail, isAllowedStudentEmail } from "./roles";
+import { allowedDomainsLabel, isAdminEmail, isAllowedStudentEmail } from "./roles";
 
 describe("isAdminEmail", () => {
   const admins = ["rishi9@illinois.edu"];
@@ -27,5 +27,13 @@ describe("isAllowedStudentEmail", () => {
     expect(isAllowedStudentEmail("a@notillinois.edu", domains)).toBe(false);
     expect(isAllowedStudentEmail("a@illinois.edu.evil.com", domains)).toBe(false);
     expect(isAllowedStudentEmail("a@cs.illinois.edu", domains)).toBe(false);
+  });
+});
+
+describe("allowedDomainsLabel", () => {
+  it("lists domains in plain English", () => {
+    expect(allowedDomainsLabel(["illinois.edu"])).toBe("@illinois.edu");
+    expect(allowedDomainsLabel(["illinois.edu", "gmail.com"])).toBe("@illinois.edu or @gmail.com");
+    expect(allowedDomainsLabel(["a.edu", "b.edu", "c.com"])).toBe("@a.edu, @b.edu or @c.com");
   });
 });
