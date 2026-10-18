@@ -5,6 +5,7 @@ import { getSiteOrigin } from "@/lib/site";
 import { listPendingOffersForEmail } from "@/lib/db/notifications";
 import { sendEmail } from "./send";
 import { newOfferEmail, offerAcceptedEmail } from "./templates";
+import { reportError } from "@/lib/errors/report";
 
 /**
  * Automatic notifications. These never throw: the action that triggered them
@@ -46,11 +47,11 @@ export async function notifyOffersSent(
       if (r.status === "fulfilled") sent++;
       else {
         failed++;
-        console.error("offer email failed", r.reason);
+        await reportError("offer email", r.reason, { projectId });
       }
     }
   } catch (error) {
-    console.error("notifyOffersSent failed", error);
+    await reportError("offer emails", error, { projectId });
     failed++;
   }
   return { sent, failed };
@@ -75,6 +76,6 @@ export async function notifyOfferAccepted(details: {
       }),
     });
   } catch (error) {
-    console.error("offer accepted email failed", error);
+    await reportError("offer accepted email", error, { projectId: details.projectId });
   }
 }

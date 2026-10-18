@@ -7,6 +7,7 @@ import { canLogIn } from "@/lib/auth/roles";
 import { finishLogin } from "@/lib/auth/finish-login";
 import { loginSchema, verifyCodeSchema } from "@/lib/validation/auth";
 import { fail, ok, type ActionResult } from "@/lib/result";
+import { reportError } from "@/lib/errors/report";
 
 /** Step 1: email the user a one-time login code. */
 export async function sendLoginCode(
@@ -33,7 +34,9 @@ export async function sendLoginCode(
   });
 
   if (error) {
-    console.error("signInWithOtp failed", error);
+    // Too many requests is normal rate limiting, not a bug worth an alert.
+    if (error.status === 429) console.error("signInWithOtp rate limited");
+    else await reportError("login code email", error);
     return fail(
       error.status === 429
         ? "Too many login emails were requested. Please wait a minute and try again."

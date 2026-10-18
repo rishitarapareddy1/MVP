@@ -8,6 +8,7 @@ import { verificationCodeEmail } from "@/lib/email/templates";
 import { confirmVerificationCode, storeVerificationCode } from "@/lib/db/verification";
 import { generateCode, isUniversityEmail, universityDomains } from "@/lib/students/verification";
 import { fail, ok, type ActionResult } from "@/lib/result";
+import { reportError } from "@/lib/errors/report";
 
 const emailSchema = z.email("Enter a valid email address").trim().toLowerCase();
 
@@ -36,7 +37,7 @@ export async function sendUniversityCode(
   try {
     await sendEmail({ to: email, ...verificationCodeEmail(code) });
   } catch (error) {
-    console.error("sending verification code failed", error);
+    await reportError("verification code email", error);
     return fail("We couldn't send the email. Please try again in a minute.");
   }
   return ok({ email });

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createIntakeRequest } from "@/lib/db/intake";
 import { HONEYPOT_FIELD, intakeSchema } from "@/lib/validation/intake";
 import { fail, failValidation, type ActionResult } from "@/lib/result";
+import { reportError } from "@/lib/errors/report";
 
 export async function submitIntake(
   _prev: ActionResult | null,
@@ -19,7 +20,7 @@ export async function submitIntake(
   try {
     await createIntakeRequest(parsed.data);
   } catch (error) {
-    console.error("createIntakeRequest failed", error);
+    await reportError("intake form", error);
     return fail("Something went wrong saving your request. Please try again.");
   }
   // Outside the try: redirect() works by throwing.

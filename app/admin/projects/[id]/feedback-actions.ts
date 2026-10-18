@@ -8,6 +8,7 @@ import { feedbackRequestEmail } from "@/lib/email/templates";
 import { getSiteOrigin } from "@/lib/site";
 import { isId } from "@/lib/validation/id";
 import { fail, ok, type ActionResult } from "@/lib/result";
+import { reportError } from "@/lib/errors/report";
 
 /**
  * Admin clicks "Email feedback link": sends the business its private
@@ -37,7 +38,7 @@ export async function emailFeedbackLink(projectId: string): Promise<ActionResult
       }),
     });
   } catch (error) {
-    console.error("feedback email failed", error);
+    await reportError("feedback request email", error, { projectId });
     return fail("The email didn't send. Try again, or copy the link and email it yourself.");
   }
 
